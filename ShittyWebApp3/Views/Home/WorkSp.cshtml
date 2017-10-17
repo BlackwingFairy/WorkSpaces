@@ -13,14 +13,7 @@
 
 </head>
 <body>
-    @*<script src="~/Scripts/jscolor.js"></script>
-
-        <table>
-            <tr>
-                <td><input class="jscolor {onFineChange:'update(this)'}" value="000000"></td>
-
-            </tr>
-        </table>*@
+   
 
     <canvas id='drawingpad' width='1000' height='500'></canvas>
 
@@ -37,11 +30,8 @@
         (function ($) {
             $(function () {
 
-                //function update(jscolor) {
-                //    // 'jscolor' instance can be used as a string
-                //    document.getElementById('rect').style.backgroundColor = '#' + jscolor
-                //}
 
+                
                 var drawGame = {
                     // указывает, происходит ли отрисовка
                     isDrawing: false,
@@ -54,8 +44,8 @@
                     startX: 0,
                     startY: 0,
                     endX: 0,
-                    endY: 0
-                    //color: ""
+                    endY: 0,
+                    
                 };
                 // контекст элемента canvas
                 var canvas = document.getElementById('drawingpad');
@@ -79,14 +69,15 @@
                     canvas.addEventListener("mousedown", mousedown, false);
                     canvas.addEventListener("mousemove", mousemove, false);
                     canvas.addEventListener("mouseup", mouseup, false);
+                    
                 });
                 // просто рисуем линию
-                function drawLine(ctx, x1, y1, x2, y2,thickness) {
+                function drawLine(ctx, x1, y1, x2, y2, thickness) {
                     ctx.beginPath();
                     ctx.moveTo(x1, y1);
                     ctx.lineTo(x2, y2);
                     ctx.lineWidth = thickness;
-                    ctx.strokeStyle = "#444";
+                    ctx.strokeStyle = "#000000";
                     ctx.stroke();
                 }
                 // нажите мыши
@@ -112,15 +103,15 @@
                         if (!(mouseX == drawGame.startX &&
                             mouseY == drawGame.startY)) {
                             drawLine(ctx, drawGame.startX,
-                                drawGame.startY, mouseX, mouseY,1);
+                                drawGame.startY, mouseX, mouseY, 1);
 
                             data.startX = drawGame.startX;
                             data.startY = drawGame.startY;
                             data.endX = mouseX;
                             data.endY = mouseY;
-                            //data.color = jscolor;
+                            
                             chat.server.send(data, '@ViewBag.Group');
-
+                            
                             drawGame.startX = mouseX;
                             drawGame.startY = mouseY;
                         }

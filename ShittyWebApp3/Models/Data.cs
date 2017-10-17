@@ -17,8 +17,7 @@ namespace ShittyWebApp3.Models
         public float EndX { get; set; }
         [JsonProperty("endY")]
         public float EndY { get; set; }
-        //[JsonProperty("color")]
-        //public string Color { get; set; }
         
+
     }
 }
