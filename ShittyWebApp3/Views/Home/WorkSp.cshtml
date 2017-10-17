@@ -1,0 +1,137 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <style>
+        canvas {
+            position: relative;
+            background-color: whitesmoke;
+            
+      
+        }
+    </style>
+
+</head>
+<body>
+    @*<script src="~/Scripts/jscolor.js"></script>
+
+        <table>
+            <tr>
+                <td><input class="jscolor {onFineChange:'update(this)'}" value="000000"></td>
+
+            </tr>
+        </table>*@
+
+    <canvas id='drawingpad' width='1000' height='500'></canvas>
+
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <!--Ссылка на библиотеку SignalR -->
+    <script src="~/Scripts/jquery.signalR-2.2.2.min.js"></script>
+    <!--Ссылка на автоматически сгенерированный скрипт хаба SignalR -->
+    <script src="~/signalr/hubs"></script>
+    <script>
+        
+        
+
+        jQuery.noConflict();
+        (function ($) {
+            $(function () {
+
+                //function update(jscolor) {
+                //    // 'jscolor' instance can be used as a string
+                //    document.getElementById('rect').style.backgroundColor = '#' + jscolor
+                //}
+
+                var drawGame = {
+                    // указывает, происходит ли отрисовка
+                    isDrawing: false,
+                    // начальная точка следующей линии
+                    startX: 0,
+                    startY: 0,
+                };
+                // модель линий
+                var data = {
+                    startX: 0,
+                    startY: 0,
+                    endX: 0,
+                    endY: 0
+                    //color: ""
+                };
+                // контекст элемента canvas
+                var canvas = document.getElementById('drawingpad');
+                var ctx = canvas.getContext('2d');
+
+                // Ссылка на автоматически-сгенерированный прокси хаба
+                var chat = $.connection.drawHub;
+                // Объявление функции, которая хаб вызывает при получении сообщений
+
+                chat.client.addLine = function (data) {
+
+                    // Добавление линий
+                    drawLine(ctx, data.startX, data.startY, data.endX, data.endY, 1);
+                };
+
+
+                // Открываем соединение
+                $.connection.hub.start().done(function () {
+                    chat.server.connect('@ViewBag.Group');
+                    // после открытия соединения устанавливаем обработчики мыши
+                    canvas.addEventListener("mousedown", mousedown, false);
+                    canvas.addEventListener("mousemove", mousemove, false);
+                    canvas.addEventListener("mouseup", mouseup, false);
+                });
+                // просто рисуем линию
+                function drawLine(ctx, x1, y1, x2, y2,thickness) {
+                    ctx.beginPath();
+                    ctx.moveTo(x1, y1);
+                    ctx.lineTo(x2, y2);
+                    ctx.lineWidth = thickness;
+                    ctx.strokeStyle = "#444";
+                    ctx.stroke();
+                }
+                // нажите мыши
+                function mousedown(e) {
+
+                    // получаем позиции x и y относительно верхнего левого угла элемента canvas
+                    var mouseX = e.layerX || 0;
+                    var mouseY = e.layerY || 0;
+                    drawGame.startX = mouseX;
+                    drawGame.startY = mouseY;
+                    drawGame.isDrawing = true;
+                };
+
+                // перемещение мыши
+                function mousemove(e) {
+
+                    // рисуем линию, если isdrawing==true
+                    if (drawGame.isDrawing) {
+
+                        // получаем позиции x и y относительно верхнего левого угла элемента canvas
+                        var mouseX = e.layerX || 0;
+                        var mouseY = e.layerY || 0;
+                        if (!(mouseX == drawGame.startX &&
+                            mouseY == drawGame.startY)) {
+                            drawLine(ctx, drawGame.startX,
+                                drawGame.startY, mouseX, mouseY,1);
+
+                            data.startX = drawGame.startX;
+                            data.startY = drawGame.startY;
+                            data.endX = mouseX;
+                            data.endY = mouseY;
+                            //data.color = jscolor;
+                            chat.server.send(data, '@ViewBag.Group');
+
+                            drawGame.startX = mouseX;
+                            drawGame.startY = mouseY;
+                        }
+                    }
+                };
+
+                function mouseup(e) {
+                    drawGame.isDrawing = false;
+                }
+            });
+        })(jQuery);
+    </script>
+</body>
+</html>

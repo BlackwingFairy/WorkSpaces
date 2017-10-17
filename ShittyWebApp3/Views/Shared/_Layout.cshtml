@@ -18,13 +18,13 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                @Html.ActionLink("Имя приложения", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                @Html.ActionLink("ShittyWebApp", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Домашняя страница", "Index", "Home")</li>
-                    <li>@Html.ActionLink("О программе", "About", "Home")</li>
-                    <li>@Html.ActionLink("Контакт", "Contact", "Home")</li>
+                    <li>@Html.ActionLink("WorkSpace", "Index", "Home")</li>
+                    @*<li>@Html.ActionLink("О программе", "About", "Home")</li>*@
+                    @*<li>@Html.ActionLink("Контакт", "Contact", "Home")</li>*@
                 </ul>
                 @Html.Partial("_LoginPartial")
             </div>
@@ -41,5 +41,26 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
+    <script>
+        var selectedUser = "";
+
+        $('.user-row').click(function () {
+            $('.user-row').removeClass('active'); $(this).addClass('active');
+        });
+
+        function selectUser(group) {
+            if (group === selectedUser) {
+                selectedUser = ""
+            }
+            else {
+                selectedUser = group;
+            }
+        }
+
+        function join() {
+            $.post("http://localhost:54909/Home/Join", { group: selectedUser });
+     
+        }  
+    </script>
 </body>
 </html>
